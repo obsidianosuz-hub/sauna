@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// configured for SQLite local storage out-of-the-box
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             Int                  @id @default(autoincrement())
+  name           String
+  pinCode        String               @unique // 4 to 8 digit unique login pin
+  role           String               @default("cashier") // "super_admin", "manager", "cashier", "inspector", "cleaner"
+  salary         Float                @default(3000000.0)
+  passportNumber String?              @unique
+  faceDescriptor String?              // Biometric face vector landmark data
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  attendance     EmployeeAttendance[]
+}
+
+model Room {
+  id           Int                  @id @default(autoincrement())
+  name         String
+  type         String               @default("hamom") // "hamom", "sauna"
+  pricePerHour Float                // hourly fee
+  status       String               @default("free") // "free", "active", "cleaning"
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  sessions     Session[]
+  reservations Reservation[]
+  roomHistory  SessionRoomHistory[]
+}
+
+model NFCWristband {
+  id               Int             @id @default(autoincrement())
+  nfcUid           String          @unique // RFID UID (e.g. RFID-RC522 output)
+  status           String          @default("free") // "free", "active", "lost"
+  currentSessionId Int?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  sessions         Session[]       @relation("WristbandSessions")
+}
+
+model Session {
+  id             Int                  @id @default(autoincrement())
+  roomId         Int
+  room           Room                 @relation(fields: [roomId], references: [id])
+  wristbandId    Int
+  wristband      NFCWristband         @relation("WristbandSessions", fields: [wristbandId], references: [id])
+  customerName   String?
+  phoneNumber    String?
+  startTime      DateTime             @default(now())
+  endTime        DateTime?            // Nullable, set when checking out
+  initialPayment Float                @default(0.0) // deposit / entrance fee paid
+  totalAmount    Float                @default(0.0) // calculated dynamically
+  cashAmount     Float                @default(0.0) // amount paid in cash (mixed payment support)
+  cardAmount     Float                @default(0.0) // amount paid by card
+  paymentStatus  String               @default("pending") // "pending", "paid"
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  orders         SessionOrder[]
+  roomHistory    SessionRoomHistory[]
+}
+
+model SessionRoomHistory {
+  id           Int      @id @default(autoincrement())
+  sessionId    Int
+  session      Session  @relation(fields: [sessionId], references: [id])
+  roomId       Int
+  room         Room     @relation(fields: [roomId], references: [id])
+  startTime    DateTime @default(now())
+  endTime      DateTime?
+  pricePerHour Float
+}
+
+model Product {
+  id            Int             @id @default(autoincrement())
+  name          String
+  barcode       String?         @unique // Barcode for scanning
+  price         Float           // retail price
+  costPrice     Float           // wholesale/cost price
+  stockQuantity Int             @default(0)
+  type          String          @default("sale") // "sale", "rent"
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  orders        SessionOrder[]
+  returns       ProductReturn[]
+  partnerId     Int?
+  partner       Partner?        @relation(fields: [partnerId], references: [id])
+}
+
+model SessionOrder {
+  id        Int       @id @default(autoincrement())
+  sessionId Int
+  session   Session   @relation(fields: [sessionId], references: [id])
+  productId Int
+  product   Product   @relation(fields: [productId], references: [id])
+  quantity  Int       @default(1)
+  orderType String    @default("bar_sale") // "bar_sale", "item_rental"
+  createdAt DateTime  @default(now())
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  category    String   // e.g. "electricity", "water", "salary", "soap", "other"
+  amount      Float
+  description String?
+  date        DateTime @default(now())
+}
+
+model ProductReturn {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  reason    String?
+  date      DateTime @default(now())
+}
+
+model Partner {
+  id        Int       @id @default(autoincrement())
+  name      String
+  contact   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model EmployeeAttendance {
+  id              Int      @id @default(autoincrement())
+  employeeId      Int
+  employee        User     @relation(fields: [employeeId], references: [id])
+  date            DateTime @default(now())
+  checkInTime     DateTime @default(now())
+  checkOutTime    DateTime?
+  faceIdMatched   Boolean  @default(false)
+  status          String   @default("present") // "present", "absent", "half_day"
+  kpiScore        Float    @default(100.0) // baseline performance score
+  bonusAmount     Float    @default(0.0)   // dynamic bonus
+  penaltyAmount   Float    @default(0.0)   // dynamic penalty
+}
+
+model Reservation {
+  id           Int      @id @default(autoincrement())
+  roomId       Int
+  room         Room     @relation(fields: [roomId], references: [id])
+  customerName String
+  phoneNumber  String
+  startTime    DateTime
+  endTime      DateTime
+  status       String   @default("pending") // "pending", "active", "cancelled"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  details   String
+  userPin   String?
+  userName  String?
+  createdAt DateTime @default(now())
+}
+
+model CameraToken {
+  id                Int           @id @default(autoincrement())
+  name              String        // Camera name or label (e.g. "Main Entry Cam")
+  token             String        @unique // The generated secure API token
+  purpose           String        // What this token is used for (e.g. "Entry turnstile scanner")
+  permissions       String        // Assigned permissions: "checkin_only", "checkout_only", "full_access"
+  connectionType    String        @default("USB") // "USB", "RTSP", "HTTP"
+  connectionAddress String        @default("local_webcam") // "local_webcam", "rtsp://...", "http://..."
+  status            String        @default("active") // "active", "revoked"
+  customCode        String?       // Optional script/code/rules block
+  scriptId          Int?          // Associated script reference ID
+  script            CameraScript? @relation(fields: [scriptId], references: [id])
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model CameraScript {
+  id          Int           @id @default(autoincrement())
+  title       String        // E.g. "Xodim KPI Nazorat Algoritmi"
+  description String?       // Brief purpose / description
+  code        String        // Script / Code block
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  cameraTokens CameraToken[]
+}
+
+model VisitorLog {
+  id          Int      @id @default(autoincrement())
+  photo       String   // base64 image data of the captured visitor face
+  cameraName  String   // Name/Label of the camera capturing the snapshot
+  detectedAt  DateTime @default(now())
+}

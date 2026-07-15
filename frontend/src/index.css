@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+}
+
+/* Custom White & Classic Premium Theme styling */
+.theme-light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #fbfbfb;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --border-color: #e4e4e7;
+}
+
+.theme-dark {
+  --bg-primary: #09090b;
+  --bg-secondary: #18181b;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --border-color: #27272a;
+}
+
+/* Global Dark theme overrides */
+html.dark, html.dark body {
+  background-color: #09090b !important;
+  color: #fafafa !important;
+}
+html.dark .bg-white {
+  background-color: #121214 !important;
+  border-color: #27272a !important;
+}
+html.dark .text-zinc-950, 
+html.dark .text-zinc-900,
+html.dark .text-zinc-800,
+html.dark h1, 
+html.dark h2, 
+html.dark h3, 
+html.dark h4, 
+html.dark th {
+  color: #fafafa !important;
+}
+html.dark .text-zinc-400,
+html.dark .text-zinc-500,
+html.dark .text-zinc-600 {
+  color: #a1a1aa !important;
+}
+html.dark .border-zinc-200, 
+html.dark .border-zinc-100, 
+html.dark .border-zinc-200\/80 {
+  border-color: #27272a !important;
+}
+html.dark input, 
+html.dark select, 
+html.dark textarea {
+  background-color: #121214 !important;
+  color: #fafafa !important;
+  border-color: #27272a !important;
+}
+html.dark .bg-zinc-50, 
+html.dark .bg-zinc-100, 
+html.dark .bg-zinc-50\/50 {
+  background-color: #1c1c1f !important;
+}
+
+/* Sidebar dark mode button premium styling */
+html.dark aside nav button {
+  color: #a1a1aa !important;
+  background-color: transparent !important;
+  transition: all 0.15s ease-in-out;
+}
+html.dark aside nav button:hover {
+  background-color: #222226 !important;
+  color: #ffffff !important;
+}
+html.dark aside nav button.bg-zinc-950 {
+  background-color: #ffffff !important;
+  color: #09090b !important;
+}
+html.dark aside nav button.bg-zinc-950 * {
+  color: #09090b !important;
+}
+html.dark aside nav button.bg-zinc-950:hover {
+  background-color: #e4e4e7 !important;
+  color: #09090b !important;
+}
+html.dark aside nav div.border-l {
+  border-left-color: #27272a !important;
+}
+
+/* Active nested sub-menu items (hammom, sauna, face_id, etc.) */
+html.dark aside nav button.bg-zinc-100 {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+html.dark aside nav button.text-zinc-950.bg-zinc-100 {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+html.dark aside nav button.text-zinc-950.bg-zinc-100:hover {
+  background-color: #38383e !important;
+  color: #ffffff !important;
+}
+
+/* Profile box fixes in dark mode */
+html.dark aside .bg-zinc-200 {
+  background-color: #27272a !important;
+  color: #fafafa !important;
+}
+
+/* Font size settings applied to html root */
+html.size-small {
+  font-size: 13px !important;
+}
+html.size-medium {
+  font-size: 16px !important;
+}
+html.size-large {
+  font-size: 19px !important;
+}
+
+/* Micro-animations and transitions */
+.btn-premium {
+  @apply transition-all duration-200 active:scale-95 border border-zinc-200 rounded-xl px-4 py-2 hover:bg-zinc-50 hover:border-zinc-300;
+}
+
+.card-premium {
+  @apply bg-white border border-zinc-100 shadow-sm rounded-2xl p-6 transition-all duration-300 hover:shadow-md;
+}
+
+/* Eye Protection / Night Shift Warm Filter */
+html.eye-protection {
+  filter: sepia(0.3) saturate(0.9) contrast(0.96) !important;
+  transition: filter 0.4s ease;
+}

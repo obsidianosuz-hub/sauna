@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+
+# IDEs and local configs
+.env
+.env*.local
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Project specific
+PortableGit/
+.system_generated/
+.gemini/
+.agents/
+logs/
+*.log
