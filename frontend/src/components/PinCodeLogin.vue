@@ -7,18 +7,20 @@
         <span class="font-semibold text-lg tracking-tight">SAUNA.UZ</span>
       </div>
       
-      <!-- Language Selector Dropdown -->
-      <div class="relative">
-        <select 
-          v-model="currentLang" 
-          @change="updateLanguage"
-          class="bg-white border border-zinc-200 text-zinc-800 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-black"
-        >
-          <option value="uz">O'zbekcha</option>
-          <option value="ru">Русский</option>
-          <option value="en">English</option>
-          <option value="tr">Türkçe</option>
-        </select>
+      <!-- Language Selector -->
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <select 
+            v-model="currentLang" 
+            @change="updateLanguage"
+            class="bg-white border border-zinc-200 text-zinc-800 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-black"
+          >
+            <option value="uz">O'zbekcha</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+            <option value="tr">Türkçe</option>
+          </select>
+        </div>
       </div>
     </header>
 

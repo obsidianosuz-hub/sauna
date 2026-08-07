@@ -232,11 +232,12 @@
           <div class="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-700 text-sm">
             {{ user?.name?.charAt(0) }}
           </div>
-          <div>
-            <h4 class="text-xs font-bold text-zinc-900 leading-tight">{{ user?.name }}</h4>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs font-bold text-zinc-900 leading-tight truncate">{{ user?.name }}</h4>
             <span class="text-[10px] font-semibold text-zinc-400 capitalize">{{ user?.role }}</span>
           </div>
         </div>
+
         <button 
           @click="logout"
           class="w-full text-center text-xs font-bold py-2 bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:text-zinc-900 hover:border-zinc-300 transition"
@@ -2963,6 +2964,9 @@ const getAuthHeaders = () => {
 const hasAccess = (section) => {
   if (!user.value) return false;
   const role = user.value.role;
+  // Menejer (manager) roliga oxirgi amallarni ko'rish taqiqlanadi (faqat super_admin ko'ra oladi)
+  if (section === 'audit_logs' && role === 'manager') return false;
+  
   if (role === 'super_admin' || role === 'manager') return true;
   
   if (role === 'cashier') {
@@ -3917,11 +3921,32 @@ const submitSupply = async () => {
   }
 };
 
+// Quick Role Switcher for Demo Variant
+const changeRole = (newRole) => {
+  if (!user.value) return;
+  user.value.role = newRole;
+  
+  if (newRole === 'super_admin') user.value.name = 'Tizim Super Admini';
+  else if (newRole === 'manager') user.value.name = 'Menejer (Operator)';
+  else if (newRole === 'cashier') user.value.name = 'Bosh Kassir';
+  else if (newRole === 'barman') user.value.name = 'Barman (Kafe)';
+
+  localStorage.setItem('sauna_user', JSON.stringify(user.value));
+  
+  if (newRole === 'cashier') {
+    activeTab.value = 'rooms';
+  } else if (newRole === 'barman') {
+    activeTab.value = 'warehouse';
+  } else {
+    activeTab.value = 'dashboard_home';
+  }
+};
+
 // Logout helper
 const logout = () => {
   localStorage.removeItem('sauna_token');
   localStorage.removeItem('sauna_user');
-  router.push('/login');
+  window.location.href = 'http://localhost:5173';
 };
 </script>
 
