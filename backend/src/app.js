@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import { rateLimit } from 'express-rate-limit';
 import apiRoutes from './routes/api.js';
 import { startRfidListener } from './services/rfidService.js';
 
@@ -9,11 +11,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// 1. HTTP Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+// 2. Rate Limiting to protect the API from DDoS/brute-force
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 200, // Limit each IP to 200 requests per window
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'So\'rovlar soni me\'yordan oshib ketdi. Iltimos 15 daqiqadan so\'ng urinib ko\'ring.' }
+});
+app.use('/api', limiter);
+
+// 3. Strict CORS settings
 app.use(cors({
-  origin: '*', // Allow all origins for RFID client and Vue frontend
+  origin: ['http://localhost:3000', 'http://localhost:5173'], // White-listed Vue client ports
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // Body parser

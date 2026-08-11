@@ -9,6 +9,51 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Code Protection & Inspect Prevention Script -->
+    <script>
+      (function() {
+        // 1. Disable Right Click Context Menu
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        });
+
+        // 2. Disable devtools keyboard shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S)
+        document.addEventListener('keydown', function(e) {
+          // F12
+          if (e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Element Selector)
+          if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+U (View Source)
+          if (e.ctrlKey && e.keyCode === 85) {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+S (Save Page)
+          if (e.ctrlKey && e.keyCode === 83) {
+            e.preventDefault();
+            return false;
+          }
+        });
+
+        // 3. Anti-debugging Loop (halts execution if devtools is forced open)
+        setInterval(function() {
+          (function() {
+            (function() {
+              var handler = function() {
+                debugger;
+              };
+              handler();
+            })();
+          })();
+        }, 800);
+      })();
+    </script>
   </head>
   <body class="bg-gray-50 text-gray-900 transition-colors duration-200">
     <div id="app"></div>

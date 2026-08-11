@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import PinCodeLogin from './components/PinCodeLogin.vue';
 import Dashboard from './components/Dashboard.vue';
 
@@ -26,17 +26,26 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 });
 
-// Navigation guard to enforce authentication
+// Navigation guard to enforce auto-login in demo mode
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('sauna_token');
+  let token = localStorage.getItem('sauna_token');
   
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
-      next({ name: 'Login' });
+      // Auto login as Super Admin for instant client-side demo entry
+      localStorage.setItem('sauna_token', 'mock-jwt-token-sauna-12345');
+      localStorage.setItem('sauna_user', JSON.stringify({
+        id: 1,
+        name: "A.Axadov",
+        pinCode: "1111",
+        role: "super_admin",
+        email: "admin@portfolio.com"
+      }));
+      next();
     } else {
       next();
     }

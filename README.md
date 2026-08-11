@@ -12,44 +12,21 @@ A modern, highly performant web application for managing saunas, bathhouses, cus
 ---
 
 ## Project Structure
-- `backend/` - Node.js Express server with Prisma ORM & SQLite database.
-- `frontend/` - Vue 3 Single Page Application styled with TailwindCSS.
+- `frontend/` - Vue 3 Single Page Application styled with TailwindCSS (Runs entirely client-side using localStorage mock database).
+- `backend/` - Node.js Express server (Legacy/optional).
 
 ---
 
 ## Installation & Setup
 
-### 1. Backend Setup
-1. Open a terminal and navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file from the example:
-   ```env
-   DATABASE_URL="file:./dev.db"
-   JWT_SECRET="super-secret-key-sauna"
-   PORT=5000
-   ```
-4. Push database migrations and seed default data:
-   ```bash
-   npx prisma db push
-   npx prisma db seed
-   ```
-5. Start the backend server:
-   ```bash
-   npm run start
-   ```
+To run the interactive demo, you only need to start the frontend. It runs fully client-side with virtual API mock interception:
 
-### 2. Frontend Setup
-1. Open a new terminal and navigate to the frontend directory:
+### Frontend Setup
+1. Navigate to the frontend directory:
    ```bash
-   cd ../frontend
+   cd frontend
    ```
-2. Install npm dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
@@ -61,5 +38,5 @@ A modern, highly performant web application for managing saunas, bathhouses, cus
 ---
 
 ## Running Locally
-* **API Server URL**: [http://localhost:5000](http://localhost:5000)
-* **Frontend Web Dashboard**: [http://localhost:3000](http://localhost:3000)
+* **Frontend Web Dashboard**: [http://localhost:3000](http://localhost:3000) (All data, logins, and settings are mocked and persisted in your browser's local storage).
+
