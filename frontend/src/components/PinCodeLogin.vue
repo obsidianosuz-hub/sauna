@@ -191,14 +191,16 @@ const handleLoginSubmit = async () => {
 
   try {
     const res = await axios.post('/api/auth/login/super', {
-      email: emailInput.value,
-      password: passwordInput.value
+      email: emailInput.value.trim(),
+      password: passwordInput.value.trim()
     });
 
-    if (res.data.success) {
+    if (res.data && res.data.success && res.data.token) {
       localStorage.setItem('sauna_token', res.data.token);
       localStorage.setItem('sauna_user', JSON.stringify(res.data.user));
       router.push('/');
+    } else {
+      errorMessage.value = res.data?.message || t('err_invalid');
     }
   } catch (err) {
     console.error(err);
