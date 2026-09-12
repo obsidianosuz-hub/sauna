@@ -30,27 +30,22 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard to enforce auto-login in demo mode
+// Navigation guard for real authenticated routes
 router.beforeEach((to, from, next) => {
-  let token = localStorage.getItem('sauna_token');
+  const token = localStorage.getItem('sauna_token');
   
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
-      // Auto login as Super Admin for instant client-side demo entry
-      localStorage.setItem('sauna_token', 'mock-jwt-token-sauna-12345');
-      localStorage.setItem('sauna_user', JSON.stringify({
-        id: 1,
-        name: "A.Axadov",
-        pinCode: "1111",
-        role: "super_admin",
-        email: "admin@portfolio.com"
-      }));
-      next();
+      next('/login');
     } else {
       next();
     }
   } else {
-    next();
+    if (token && (to.path === '/login' || to.path === '/admin-login')) {
+      next('/');
+    } else {
+      next();
+    }
   }
 });
 

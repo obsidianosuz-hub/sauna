@@ -240,19 +240,10 @@
 
         <button 
           @click="logout"
-          class="w-full text-center text-xs font-bold py-2 bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:text-zinc-900 hover:border-zinc-300 transition mb-2"
+          class="w-full text-center text-xs font-bold py-2 bg-white border border-zinc-200 text-zinc-500 rounded-xl hover:text-zinc-900 hover:border-zinc-300 transition"
         >
           {{ t('logout') }}
         </button>
-
-        <a 
-          href="http://localhost:5173"
-          class="w-full text-center text-xs font-bold py-2 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-xl hover:shadow-lg hover:shadow-red-500/25 transition block"
-          style="display: flex; align-items: center; justify-content: center; gap: 6px;"
-        >
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          Demodan Chiqish
-        </a>
       </div>
     </aside>
 
@@ -3955,7 +3946,7 @@ const changeRole = (newRole) => {
 const logout = () => {
   localStorage.removeItem('sauna_token');
   localStorage.removeItem('sauna_user');
-  window.location.href = 'http://localhost:5173';
+  router.push('/login');
 };
 </script>
 
